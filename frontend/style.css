@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Montserrat&display=swap');
+
+html, body {
+    margin: 0;
+}
+
+body {
+    margin: 32px;
+    box-sizing: border-box;
+    background-color: #111;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+}
+body, .section {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-family: 'Arvo', serif;
+    margin-top: 0;
+    color: #de73ff;
+}
+
+input {
+    font: inherit;
+}
+input[type=range] {
+    vertical-align: bottom;
+}
+input[type=range] + span {
+    display: block;
+    text-align: end;
+    width: 32px;
+    margin-right: 5px;
+}
+
+span {
+    display: flex;
+}
+
+.section {
+    border: 2px solid white;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 0 32px 0 0;
+}
+.section > h2 {
+    font-family: 'Arvo', serif;
+    margin-top: 0;
+}
+.section > span:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+span > input {
+    margin-left: 5px;
+}
