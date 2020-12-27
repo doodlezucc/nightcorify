@@ -27,7 +27,7 @@ void main(List<String> args) async {
   var result = parser.parse(args);
 
   // For Google Cloud Run, we respect the PORT environment variable
-  var portStr = result['port'] ?? Platform.environment['PORT'] ?? '8080';
+  var portStr = result['port'] ?? Platform.environment['PORT'] ?? '808';
   var port = int.tryParse(portStr);
 
   if (port == null) {
@@ -37,7 +37,16 @@ void main(List<String> args) async {
     return;
   }
 
+  shelf.Response _cors(shelf.Response response) => response.change(headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      });
+
+  var _fixCORS = shelf.createMiddleware(responseHandler: _cors);
+
   var handler = const shelf.Pipeline()
+      .addMiddleware(_fixCORS)
       .addMiddleware(shelf.logRequests())
       .addHandler(_echoRequest);
 
@@ -47,9 +56,8 @@ void main(List<String> args) async {
 
 File uniqueFile() => File('jobs/' + getRandomString(8));
 
-Future<shelf.Response> handleNightcore(List<int> data) async {
-  var file = await uniqueFile().writeAsBytes(data);
-  return await nightcorifyFileResponse(file);
+Future<File> dataToFile(List<int> data) async {
+  return await uniqueFile().writeAsBytes(data);
 }
 
 Future<shelf.Response> nightcorifyFileResponse(File file) async {
@@ -93,16 +101,23 @@ Future<File> youtubeToFile(String query) async {
 }
 
 Future<shelf.Response> _echoRequest(shelf.Request request) async {
+  if (request.method == 'OPTIONS') {
+    return shelf.Response.ok('Request for "${request.url}"');
+  }
+
   if (request.url.path.isEmpty) {
     return shelf.Response.seeOther('index.html');
   } else if (request.url.path.startsWith('nightcore/')) {
     var action = request.url.path.substring(10);
+    File file;
     if (action == 'upload') {
-      return await handleNightcore(
-          await request.read().reduce((list1, list2) => list1 + list2));
+      file = await dataToFile(await request.read().reduce((a, b) => a + b));
     } else if (action.startsWith('youtube')) {
-      return await nightcorifyFileResponse(
-          await youtubeToFile(request.url.queryParameters['q']));
+      file = await youtubeToFile(request.url.queryParameters['q']);
+    }
+
+    if (file != null) {
+      return await nightcorifyFileResponse(file);
     }
   }
 

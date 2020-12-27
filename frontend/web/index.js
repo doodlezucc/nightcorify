@@ -13,8 +13,8 @@ urlInput.onkeydown = function(e) {
 
 const volume = document.getElementById('volume');
 volume.oninput = writeValueToSibling;
-const bassBoost = document.getElementById('bass');
-bassBoost.oninput = writeValueToSibling;
+const bassboost = document.getElementById('bass');
+bassboost.oninput = writeValueToSibling;
 
 function writeValueToSibling() {
     this.nextSibling.textContent = this.value;
@@ -28,7 +28,7 @@ function onFile() {
     reader.readAsArrayBuffer(picker.files[0]);
 }
 
-function sendRequest(action, arrayBuffer) {
+function sendRequest(action, body) {
     const req = new XMLHttpRequest();
     req.open('POST', 'nightcore/' + action, true);
     req.responseType = 'blob';
@@ -42,15 +42,16 @@ function sendRequest(action, arrayBuffer) {
         }
     });
 
-    if (action === 'upload') {
-        req.setRequestHeader('Content-Type', 'application/octet-stream');
-    }
-    req.send(arrayBuffer);
+    req.setRequestHeader('Content-Type', action === 'upload' ? 'application/octet-stream' : 'application/json');
+    req.send(body);
 }
 
 function onUrl() {
     var text = urlInput.value;
     if (text.length > 0) {
-        sendRequest('youtube?q=' + text);
+        sendRequest('youtube?q=' + text, {
+            amplify: parseFloat(volume.value),
+            bassboost: parseFloat(bassboost.value)
+        });
     }
 }
