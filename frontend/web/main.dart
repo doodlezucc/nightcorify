@@ -1,5 +1,7 @@
 import 'dart:html';
 
+import 'nightcore.dart';
+
 const domain = 'http://localhost:808';
 
 InputElement urlInput;
@@ -7,18 +9,30 @@ InputElement picker;
 InputElement volume;
 InputElement bassboost;
 AudioElement audio;
+NightcoreContext ctx;
+bool playing = false;
 
 void main() {
   querySelector('#output').text = 'Your Dart app is running.';
 
   audio = (document.querySelector('audio') as AudioElement)..volume = 0.1;
+  ctx = NightcoreContext(audio);
+
+  document.getElementById('playButton').onClick.listen((event) {
+    playing = !playing;
+    (event.target as Element).classes.toggle('playing', playing);
+    if (playing) {
+      if (ctx.ctx.currentTime == 0) ctx.ctx.resume();
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
 
   picker = document.getElementById('picker')
     ..onChange.listen((_) {
       var reader = FileReader();
-      reader.onLoad.listen((event) {
-        sendRequest('upload', reader.result);
-      });
+      reader.onLoad.listen((_) => sendRequest('upload', reader.result));
       reader.readAsArrayBuffer(picker.files[0]);
     });
 
@@ -27,12 +41,15 @@ void main() {
       if (e.keyCode == 13) onUrl();
     });
 
-  writeValueToSibling(volume = document.getElementById('volume'));
-  writeValueToSibling(bassboost = document.getElementById('bass'));
+  writeValueToSibling(
+      volume = document.getElementById('volume'), (v) => ctx.amplify = v);
+  writeValueToSibling(
+      bassboost = document.getElementById('bass'), (v) => ctx.bassboost = v);
 }
 
-void writeValueToSibling(InputElement range) {
+void writeValueToSibling(InputElement range, void Function(double v) param) {
   void apply() {
+    param(range.valueAsNumber);
     range.nextElementSibling.text = range.value;
   }
 
