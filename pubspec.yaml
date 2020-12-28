@@ -9,7 +9,7 @@ environment:
 dependencies:
   args: ^1.6.0
   shelf: ^0.7.5
-  path:
+  meta: ^1.2.4
 
 dev_dependencies:
   pedantic: ^1.9.0
