@@ -12,7 +12,6 @@ void onInput(InputElement input, void Function(double v) onValueChange,
 
   listenApply(input.onInput, apply);
   input.onChange.listen((_) {
-    print('gotta apply that shit');
     apply();
   });
 }
@@ -39,7 +38,6 @@ void registerSlider(InputElement range) {
 
 void _redraw(Element range, num v, num min, num max) {
   var value = (v - min) / (max - min) * 100;
-  print('$value');
   range.style.background =
       'linear-gradient(to right, $lower $value%, $upper $value%)';
 }

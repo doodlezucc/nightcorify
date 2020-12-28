@@ -42,8 +42,6 @@ class AudioPlayer {
       playing = !playing;
       (event.target as Element).classes.toggle('playing', playing);
       if (playing) {
-        print(audio);
-        print(audio.src);
         audio.play();
       } else {
         audio.pause();
