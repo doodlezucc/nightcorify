@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:html';
 
+import 'dart/duration.dart';
 import 'nightcore.dart';
 
 const domain = 'http://localhost:808';
@@ -11,17 +13,17 @@ InputElement amplify;
 InputElement outVolume;
 InputElement bassboost;
 
-SpanElement timeSpan = querySelector('#currentTime');
-SpanElement durationSpan = querySelector('#duration');
+final SpanElement timeSpan = querySelector('#currentTime');
+final InputElement timeSlider = querySelector('#time');
+final SpanElement durationSpan = querySelector('#duration');
 
-AudioElement audio;
+final AudioElement audio = document.querySelector('audio');
 NightcoreContext ctx;
 bool playing = false;
 
 void main() async {
   querySelector('#output').text = "doodlezucc's";
 
-  audio = (document.querySelector('audio') as AudioElement);
   ctx = NightcoreContext(audio);
   await ctx.initialize();
 
@@ -52,6 +54,37 @@ void main() async {
   onInput(amplify = document.getElementById('amplify'), (v) => ctx.amplify = v);
   onInput(
       bassboost = document.getElementById('bass'), (v) => ctx.bassboost = v);
+
+  audio.onDurationChange.listen((_) => updateDuration());
+  updateDuration();
+
+  var isDraggingTime = false;
+  timeSlider.onMouseDown.listen((_) async {
+    isDraggingTime = true;
+    await document.onMouseUp.first;
+    audio.currentTime = timeSlider.valueAsNumber * audio.duration;
+    isDraggingTime = false;
+  });
+
+  Timer.periodic(Duration(milliseconds: 50), (timer) {
+    updateCurrentTime(
+      seconds: isDraggingTime
+          ? timeSlider.valueAsNumber * audio.duration
+          : audio.currentTime,
+      updateSlider: !isDraggingTime,
+    );
+  });
+}
+
+void updateCurrentTime({num seconds = 0, bool updateSlider = true}) {
+  if (updateSlider) {
+    timeSlider.valueAsNumber = seconds / audio.duration;
+  }
+  timeSpan.text = durationString(seconds.floor());
+}
+
+void updateDuration() {
+  durationSpan.text = durationString(audio.duration.floor());
 }
 
 void onInput(InputElement range, void Function(double v) param,
