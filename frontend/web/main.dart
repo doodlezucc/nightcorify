@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:html';
 
 import 'dart/duration.dart';
-import 'nightcore.dart';
+import 'dart/nightcore.dart';
 
 const domain = 'http://localhost:808';
 
