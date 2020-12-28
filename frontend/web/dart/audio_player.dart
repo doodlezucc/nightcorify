@@ -13,11 +13,19 @@ class AudioPlayer {
   InputElement outVolume;
 
   final void Function(double v) onVolumeChange;
-  final AudioElement audio;
+  final AudioElement _audio;
 
-  bool playing = false;
+  bool _playing = false;
 
-  AudioPlayer({@required this.onVolumeChange, @required this.audio}) {
+  set playbackRate(num rate) {
+    _audio.playbackRate = rate;
+    updateDuration();
+  }
+
+  num get playbackRate => _audio.playbackRate;
+
+  AudioPlayer({@required this.onVolumeChange, @required AudioElement audio})
+      : _audio = audio {
     initPlayPauseButton();
     initTimeSlider();
     initDuration();
@@ -25,7 +33,7 @@ class AudioPlayer {
   }
 
   void setSourceUrl(String src) {
-    audio.src = src;
+    _audio.src = src;
     print('Changed source');
   }
 
@@ -39,20 +47,23 @@ class AudioPlayer {
 
   void initPlayPauseButton() {
     document.getElementById('playButton').onClick.listen((event) {
-      playing = !playing;
-      (event.target as Element).classes.toggle('playing', playing);
-      if (playing) {
-        audio.play();
+      _playing = !_playing;
+      (event.target as Element).classes.toggle('playing', _playing);
+      if (_playing) {
+        _audio.play();
       } else {
-        audio.pause();
+        _audio.pause();
       }
     });
   }
 
   void initDuration() {
-    listenApply(audio.onDurationChange, () {
-      durationSpan.text = durationString(audio.duration.floor());
-    });
+    listenApply(_audio.onDurationChange, updateDuration);
+  }
+
+  void updateDuration() {
+    durationSpan.text =
+        durationString((_audio.duration / playbackRate).floor());
   }
 
   void initTimeSlider() {
@@ -60,19 +71,19 @@ class AudioPlayer {
     timeSlider.onMouseDown.listen((_) async {
       isDraggingTime = true;
       await document.onMouseUp.first;
-      audio.currentTime = timeSlider.valueAsNumber * audio.duration;
+      _audio.currentTime = timeSlider.valueAsNumber * _audio.duration;
       isDraggingTime = false;
     });
 
-    timeSlider.onInput.listen(
-        (_) => setTimeDisplay(timeSlider.valueAsNumber * audio.duration));
+    timeSlider.onInput.listen((_) => setTimeDisplay(
+        timeSlider.valueAsNumber * _audio.duration / playbackRate));
 
     Timer.periodic(Duration(milliseconds: 50), (timer) {
       if (!isDraggingTime) {
-        var seconds = audio.currentTime;
-        timeSlider.valueAsNumber = seconds / audio.duration;
+        var seconds = _audio.currentTime;
+        timeSlider.valueAsNumber = seconds / _audio.duration;
         redrawSlider(timeSlider);
-        setTimeDisplay(seconds);
+        setTimeDisplay(seconds / playbackRate);
       }
     });
   }

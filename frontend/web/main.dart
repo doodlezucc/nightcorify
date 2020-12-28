@@ -9,6 +9,7 @@ const domain = 'http://localhost:808';
 InputElement urlInput;
 InputElement picker;
 
+InputElement rate;
 InputElement amplify;
 InputElement bassboost;
 
@@ -38,7 +39,17 @@ void main() async {
 
   await nc.initialize();
 
+  player = AudioPlayer(
+    onVolumeChange: (v) => nc.outputVolume = v,
+    audio: audio,
+  );
+
   // Listen to slider inputs
+  onInput(
+    rate = document.getElementById('rate'),
+    (v) => player.playbackRate = v,
+    digits: 2,
+  );
   onInput(
     amplify = document.getElementById('amplify'),
     (v) => nc.amplify = v,
@@ -46,11 +57,6 @@ void main() async {
   onInput(
     bassboost = document.getElementById('bass'),
     (v) => nc.bassboost = v,
-  );
-
-  player = AudioPlayer(
-    onVolumeChange: (v) => nc.outputVolume = v,
-    audio: audio,
   );
 
   // Wait for first user interaction so audio context can be started

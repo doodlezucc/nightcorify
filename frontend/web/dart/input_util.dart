@@ -1,12 +1,12 @@
 import 'dart:html';
 
 void onInput(InputElement input, void Function(double v) onValueChange,
-    {bool writeToSibling = true}) {
+    {bool writeToSibling = true, int digits = 0}) {
   void apply() {
     var v = input.valueAsNumber;
     onValueChange(v);
     if (writeToSibling) {
-      input.nextElementSibling.text = v.toStringAsFixed(0);
+      input.nextElementSibling.text = v.toStringAsFixed(digits);
     }
   }
 
