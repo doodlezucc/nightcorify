@@ -6,17 +6,19 @@ const domain = 'http://localhost:808';
 
 InputElement urlInput;
 InputElement picker;
-InputElement volume;
+InputElement amplify;
+InputElement outVolume;
 InputElement bassboost;
 AudioElement audio;
 NightcoreContext ctx;
 bool playing = false;
 
-void main() {
+void main() async {
   querySelector('#output').text = 'Your Dart app is running.';
 
-  audio = (document.querySelector('audio') as AudioElement)..volume = 0.1;
+  audio = (document.querySelector('audio') as AudioElement);
   ctx = NightcoreContext(audio);
+  await ctx.initialize();
 
   document.getElementById('playButton').onClick.listen((event) {
     playing = !playing;
@@ -41,16 +43,21 @@ void main() {
       if (e.keyCode == 13) onUrl();
     });
 
+  writeValueToSibling(outVolume = document.getElementById('volume'),
+      (v) => ctx.outputVolume = v,
+      multiply: 100);
   writeValueToSibling(
-      volume = document.getElementById('volume'), (v) => ctx.amplify = v);
+      amplify = document.getElementById('amplify'), (v) => ctx.amplify = v);
   writeValueToSibling(
       bassboost = document.getElementById('bass'), (v) => ctx.bassboost = v);
 }
 
-void writeValueToSibling(InputElement range, void Function(double v) param) {
+void writeValueToSibling(InputElement range, void Function(double v) param,
+    {double multiply = 1, int digits = 0}) {
   void apply() {
-    param(range.valueAsNumber);
-    range.nextElementSibling.text = range.value;
+    var v = range.valueAsNumber;
+    param(v);
+    range.nextElementSibling.text = (v * multiply).toStringAsFixed(digits);
   }
 
   range.onInput.listen((event) => apply());
@@ -81,7 +88,7 @@ void onUrl() {
   var text = urlInput.value;
   if (text.isNotEmpty) {
     sendRequest('youtube?q=' + text, {
-      'amplify': volume.valueAsNumber,
+      'amplify': amplify.valueAsNumber,
       'bassboost': bassboost.valueAsNumber
     });
   }
