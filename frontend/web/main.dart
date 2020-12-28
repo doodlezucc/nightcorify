@@ -33,9 +33,7 @@ void main() async {
 
   picker = document.getElementById('picker')
     ..onChange.listen((_) {
-      var reader = FileReader();
-      reader.onLoad.listen((_) => sendRequest('upload', reader.result));
-      reader.readAsArrayBuffer(picker.files[0]);
+      audio.src = Url.createObjectUrlFromBlob(picker.files[0]);
     });
 
   urlInput = document.getElementById('url')
@@ -65,31 +63,24 @@ void writeValueToSibling(InputElement range, void Function(double v) param,
   apply();
 }
 
-void sendRequest(action, body) {
+void sendRequest(String action, [dynamic body]) {
   var req = HttpRequest()
-    ..open('POST', '$domain/nightcore/' + action, async: true)
-    ..responseType = 'blob';
+    ..open('GET', '$domain/nightcore/' + action, async: true);
 
-  req
-    ..onLoad.listen((event) {
-      if (req.status >= 200 && req.status < 300) {
-        print(req);
-        audio.src = Url.createObjectUrlFromBlob(req.response);
-      } else {
-        print(req.status.toString() + ' | ' + req.statusText);
-      }
-    })
-    ..setRequestHeader('Content-Type',
-        action == 'upload' ? 'application/octet-stream' : 'application/json')
-    ..send(body);
+  req.onLoad.listen((event) {
+    if (req.status >= 200 && req.status < 300) {
+      audio.src = Url.createObjectUrlFromBlob(req.response);
+    } else {
+      print(req.status.toString() + ' | ' + req.statusText);
+    }
+  });
+  req.responseType = 'blob';
+  req.send();
 }
 
 void onUrl() {
   var text = urlInput.value;
   if (text.isNotEmpty) {
-    sendRequest('youtube?q=' + text, {
-      'amplify': amplify.valueAsNumber,
-      'bassboost': bassboost.valueAsNumber
-    });
+    sendRequest('youtube?q=' + text);
   }
 }

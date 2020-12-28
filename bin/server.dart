@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -113,7 +114,8 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
     if (action == 'upload') {
       file = await dataToFile(await request.read().reduce((a, b) => a + b));
     } else if (action.startsWith('youtube')) {
-      file = await youtubeToFile(request.url.queryParameters['q']);
+      return shelf.Response.ok(
+          (await youtubeToFile(request.url.queryParameters['q'])).openRead());
     }
 
     if (file != null) {
