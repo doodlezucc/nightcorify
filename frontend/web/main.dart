@@ -14,7 +14,7 @@ NightcoreContext ctx;
 bool playing = false;
 
 void main() async {
-  querySelector('#output').text = 'Your Dart app is running.';
+  querySelector('#output').text = "doodlezucc's";
 
   audio = (document.querySelector('audio') as AudioElement);
   ctx = NightcoreContext(audio);
@@ -64,16 +64,23 @@ void writeValueToSibling(InputElement range, void Function(double v) param,
 }
 
 void sendRequest(String action, [dynamic body]) {
+  void displayError() {
+    print('bruh');
+  }
+
   var req = HttpRequest()
     ..open('GET', '$domain/nightcore/' + action, async: true);
 
   req.onLoad.listen((event) {
     if (req.status >= 200 && req.status < 300) {
+      print('Audio source set');
       audio.src = Url.createObjectUrlFromBlob(req.response);
     } else {
       print(req.status.toString() + ' | ' + req.statusText);
+      displayError();
     }
   });
+  req.onError.listen((event) => displayError());
   req.responseType = 'blob';
   req.send();
 }

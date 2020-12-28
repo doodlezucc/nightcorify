@@ -87,6 +87,7 @@ Future<File> youtubeToFile(String query) async {
   var arguments = [
     '-f',
     'bestaudio[filesize<40M]',
+    '-w',
     '-o',
     file.path,
     query.startsWith('http') ? query : 'ytsearch1:$query'
@@ -110,16 +111,18 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
     return shelf.Response.seeOther('index.html');
   } else if (request.url.path.startsWith('nightcore/')) {
     var action = request.url.path.substring(10);
-    File file;
     if (action == 'upload') {
-      file = await dataToFile(await request.read().reduce((a, b) => a + b));
-    } else if (action.startsWith('youtube')) {
-      return shelf.Response.ok(
-          (await youtubeToFile(request.url.queryParameters['q'])).openRead());
-    }
+      var file = await dataToFile(await request.read().reduce((a, b) => a + b));
 
-    if (file != null) {
       return await nightcorifyFileResponse(file);
+    } else if (action.startsWith('youtube')) {
+      var file = await youtubeToFile(request.url.queryParameters['q']);
+
+      if (await file.exists()) {
+        return shelf.Response.ok(file.openRead());
+      }
+      return shelf.Response.internalServerError(
+          body: 'No file was downloaded.');
     }
   }
 
