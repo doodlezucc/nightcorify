@@ -73,6 +73,7 @@ class AudioPlayer {
       if (!isDraggingTime) {
         var seconds = audio.currentTime;
         timeSlider.valueAsNumber = seconds / audio.duration;
+        redrawSlider(timeSlider);
         setTimeDisplay(seconds);
       }
     });

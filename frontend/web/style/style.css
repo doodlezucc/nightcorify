@@ -10,6 +10,7 @@ body {
     background-color: #111;
     color: white;
     font-family: 'Montserrat', sans-serif;
+    --color-main: #5d79ff
 }
 body, .section {
     display: inline-flex;
@@ -19,7 +20,7 @@ body, .section {
 h1 {
     font-family: 'Arvo', serif;
     margin-top: 0;
-    color: #5d79ff;
+    color: var(--color-main);
 }
 
 button, .file-upload {
@@ -60,6 +61,19 @@ input[type="file"] {
 
 input[type=range] {
     vertical-align: bottom;
+    appearance: none;
+    height: 2px;
+    background: #ccc;
+    border: none;
+    cursor: pointer;
+    border-radius: 100px;
+}
+input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color-main);
 }
 .section input[type=range] + span {
     display: block;

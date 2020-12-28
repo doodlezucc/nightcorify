@@ -19,6 +19,8 @@ AudioPlayer player;
 void main() async {
   querySelector('#output').text = "doodlezucc's";
 
+  registerAllSliders();
+
   AudioElement audio = document.querySelector('audio');
   nc = NightcoreContext(audio);
 
