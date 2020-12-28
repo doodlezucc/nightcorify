@@ -19,12 +19,45 @@ body, .section {
 h1 {
     font-family: 'Arvo', serif;
     margin-top: 0;
-    color: #de73ff;
+    color: #5d79ff;
+}
+
+button, .file-upload {
+    color: black;
+    background-color: #ddd;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    width: fit-content;
+}
+button:hover, .file-upload:hover {
+    background-color: white;
+}
+button:active, .file-upload:active {
+    background-color: #bbb;
+}
+
+input, button {
+    outline: none;
+    border: none;
 }
 
 input {
     font: inherit;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    color: white;
 }
+input:hover {
+    border-color: white;
+}
+
+input[type="file"] {
+    display: none;
+}
+
 input[type=range] {
     vertical-align: bottom;
 }
@@ -40,11 +73,15 @@ span {
     align-items: center;
 }
 
+#url {
+    min-width: 350px;
+}
+
 .section {
     border: 2px solid white;
     padding: 12px;
     margin-bottom: 16px;
-    border-radius: 0 32px 0 0;
+    /* border-radius: 0 32px 0 0; */
 }
 .section > h2 {
     font-family: 'Arvo', serif;
@@ -54,6 +91,6 @@ span {
     margin-bottom: 8px;
 }
 
-span > input {
-    margin-left: 5px;
+span > * {
+    margin-left: 8px;
 }
