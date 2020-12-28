@@ -6,9 +6,14 @@ const domain = 'http://localhost:808';
 
 InputElement urlInput;
 InputElement picker;
+
 InputElement amplify;
 InputElement outVolume;
 InputElement bassboost;
+
+SpanElement timeSpan = querySelector('#currentTime');
+SpanElement durationSpan = querySelector('#duration');
+
 AudioElement audio;
 NightcoreContext ctx;
 bool playing = false;
@@ -41,21 +46,22 @@ void main() async {
       if (e.keyCode == 13) onUrl();
     });
 
-  writeValueToSibling(outVolume = document.getElementById('volume'),
+  onInput(outVolume = document.getElementById('volume'),
       (v) => ctx.outputVolume = v,
-      multiply: 100);
-  writeValueToSibling(
-      amplify = document.getElementById('amplify'), (v) => ctx.amplify = v);
-  writeValueToSibling(
+      writeToSibling: false);
+  onInput(amplify = document.getElementById('amplify'), (v) => ctx.amplify = v);
+  onInput(
       bassboost = document.getElementById('bass'), (v) => ctx.bassboost = v);
 }
 
-void writeValueToSibling(InputElement range, void Function(double v) param,
-    {double multiply = 1, int digits = 0}) {
+void onInput(InputElement range, void Function(double v) param,
+    {bool writeToSibling = true}) {
   void apply() {
     var v = range.valueAsNumber;
     param(v);
-    range.nextElementSibling.text = (v * multiply).toStringAsFixed(digits);
+    if (writeToSibling) {
+      range.nextElementSibling.text = v.toStringAsFixed(0);
+    }
   }
 
   range.onInput.listen((event) => apply());

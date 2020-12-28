@@ -61,7 +61,7 @@ input[type="file"] {
 input[type=range] {
     vertical-align: bottom;
 }
-input[type=range] + span {
+.section input[type=range] + span {
     display: block;
     text-align: end;
     width: 32px;
@@ -93,4 +93,42 @@ span {
 
 span > * {
     margin-left: 8px;
+}
+
+#audioControls {
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    border-radius: 1000px;
+    padding: 4px;
+    /* grid-template-columns: min-content min-content auto min-content min-content; */
+}
+
+#audioControls > span {
+    display: block;
+    width: 200px;
+    margin: 0 8px;
+}
+#audioControls > span:first-of-type {
+    text-align: end;
+}
+
+#playButton {
+    border: 2px solid white;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    color: white;
+    opacity: 0.7;
+    background: url('play.svg') no-repeat scroll center center;
+}
+#playButton.playing {
+    background-image: url('pause.svg');
+}
+#playButton:hover {
+    opacity: 1;
+}
+
+#time {
+    width: 100%;
 }
