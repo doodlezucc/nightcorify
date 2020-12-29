@@ -18,6 +18,7 @@ class NightcoreContext {
 
   NightcoreContext(MediaElement source, {bool offline = false})
       : ctx = offline ? OfflineAudioContext(2) : AudioContext() {
+    jsu.setProperty(source, 'preservesPitch', false);
     _outGain = ctx.createGain()..connectNode(ctx.destination);
     _source = ctx.createMediaElementSource(source);
   }

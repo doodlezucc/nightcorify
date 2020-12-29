@@ -17,12 +17,11 @@ class AudioPlayer {
 
   bool _playing = false;
 
+  num get playbackRate => _audio.playbackRate;
   set playbackRate(num rate) {
     _audio.playbackRate = rate;
     updateDuration();
   }
-
-  num get playbackRate => _audio.playbackRate;
 
   AudioPlayer({@required this.onVolumeChange, @required AudioElement audio})
       : _audio = audio {
