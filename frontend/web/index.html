@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="scaffolded-by" content="https://github.com/dart-lang/stagehand">
-  <title>nightcorify</title>
+  <title>Nightcorify</title>
   <link rel="stylesheet" href="style/style.css">
   <link rel="icon" href="favicon.ico">
   <script defer src="main.dart.js"></script>
@@ -23,15 +23,14 @@
     <span>Enter a search query or YouTube URL:<input type="text" id="url"
         placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"></span>
     <span>or
-      <label class="file-upload">
-        <input type="file" id="picker">Upload your own file
-      </label>
+      <input type="file" id="picker">
+      <label class="file-upload" for="picker">Upload your own file</label>
     </span>
   </div>
 
   <div class="section">
     <h2>Effects</h2>
-    <span>Speed:<input type="range" id="rate" min="0.25" max="4" value="1" step="0.01"><span>1</span>x</span>
+    <span>Speed:<input type="range" id="rate" min="0.5" max="4" value="1" step="0.01"><span>1.00</span>x</span>
     <span>Amplify:<input type="range" id="amplify" min="0" max="100" value="0"><span>0</span>dB</span>
     <span>Bass boost:<input type="range" id="bass" min="0" max="30" value="0"><span>0</span>dB</span>
   </div>
@@ -44,7 +43,7 @@
     <input type="range" id="volume" min="0" max="1" value="0.2" step="0.0001">
   </div>
 
-  <audio src="faber.mp3" preservesPitch="false"></audio>
+  <audio src="faber.mp3"></audio>
 </body>
 
 </html>

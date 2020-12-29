@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Montserrat:wght@400;500&display=swap');
 
 html, body {
     margin: 0;
@@ -25,15 +25,16 @@ h1 {
 
 button, .file-upload {
     color: black;
-    background-color: #ddd;
+    background-color: var(--color-main);
     border-radius: 4px;
     padding: 4px 6px;
-    font: inherit;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
     width: fit-content;
+    transition: 0.1s;
 }
-button:hover, .file-upload:hover {
+button:hover, .file-upload:hover,
+button:focus, input[type=file]:focus + label {
     background-color: white;
 }
 button:active, .file-upload:active {
@@ -48,15 +49,21 @@ input, button {
 input {
     font: inherit;
     background: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
     color: white;
+    transition-duration: 0.1s;
 }
-input:hover {
+input:hover, input:focus {
     border-color: white;
 }
 
 input[type=file] {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    margin-top: 4px;
+    outline: none;
 }
 
 input[type=range] {
@@ -68,12 +75,16 @@ input[type=range] {
     cursor: pointer;
     border-radius: 100px;
 }
+input[type=range]:focus {
+    height: 5px;
+}
 input[type=range]::-webkit-slider-thumb {
     appearance: none;
     width: 16px;
     height: 16px;
     border-radius: 50%;
     background-color: var(--color-main);
+    transition-duration: 0.1s;
 }
 input[type=range]::-moz-range-thumb {
     appearance: none;
@@ -81,7 +92,14 @@ input[type=range]::-moz-range-thumb {
     height: 16px;
     border-radius: 50%;
     background-color: var(--color-main);
+    transition-duration: 0.1s;
     border: none;
+}
+input[type=range]:hover::-webkit-slider-thumb {
+    background-color: white;
+}
+input[type=range]:hover::-moz-range-thumb {
+    background-color: white;
 }
 .section input[type=range] + span {
     display: block;
@@ -122,7 +140,7 @@ span > * {
     display: flex;
     align-items: center;
     border-radius: 1000px;
-    padding: 4px;
+    padding: 6px;
 }
 
 #audioControls > span {
@@ -134,19 +152,23 @@ span > * {
     text-align: end;
 }
 
+#audioControls > #volume {
+    width: 60px;
+}
+
 #playButton {
     border: 2px solid white;
     border-radius: 50%;
     min-width: 32px;
     min-height: 32px;
     color: white;
-    opacity: 0.7;
+    opacity: 0.6;
     background: url('play.svg') no-repeat scroll center center;
 }
 #playButton.playing {
     background-image: url('pause.svg');
 }
-#playButton:hover {
+#playButton:hover, #playButton:focus {
     opacity: 1;
 }
 
