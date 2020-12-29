@@ -34,6 +34,7 @@ class AudioPlayer {
     var rate = _audio.playbackRate;
     _audio.src = src;
     _audio.playbackRate = rate;
+    playButton.classes.remove('playing');
     print('Changed source');
   }
 
