@@ -103,18 +103,28 @@ input[type=range]:hover::-moz-range-thumb {
     background-color: white;
 }
 .section input[type=range] + span {
-    display: block;
     text-align: end;
     width: 32px;
     margin-right: 4px;
 }
 
-span {
-    display: flex;
+a {
+    color: var(--color-main);
+    transition-duration: 0.1s;
+}
+a:hover {
+    color: white;
+}
+a:active {
+    color: #bbb;
+}
+
+span, a {
     align-items: center;
 }
 
 #url {
+    margin-left: 8px;
     min-width: 350px;
 }
 
@@ -127,13 +137,10 @@ span {
 .section > h2 {
     font-family: 'Arvo', serif;
     margin-top: 0;
+    margin-bottom: 8px;
 }
 .section > span:not(:last-child) {
     margin-bottom: 8px;
-}
-
-span:not(.effect) > * {
-    margin-left: 8px;
 }
 
 input[type=number] {
@@ -166,7 +173,6 @@ input::-webkit-inner-spin-button {
 }
 
 #audioControls > span {
-    display: block;
     width: 120px;
     margin: 0 8px;
 }
@@ -199,9 +205,6 @@ input::-webkit-inner-spin-button {
 }
 
 .single-section {
-    display: flex;
+    display: block;
     margin: 16px 0;
-}
-.single-section > *:not(:first-child) {
-    margin-left: 4px;
 }

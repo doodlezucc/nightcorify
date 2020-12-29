@@ -9,6 +9,7 @@ import 'dart/input_util.dart';
 
 const domain = 'http://localhost:808';
 
+final AnchorElement link = querySelector('#download');
 InputElement urlInput;
 InputElement picker;
 
@@ -86,10 +87,19 @@ void testAudioRead() {
   req.send();
 }
 
+void download(Blob blob, String name) async {
+  link.text = 'Click to download.';
+  link.setAttribute('download', name);
+  link.href = Url.createObjectUrlFromBlob(blob);
+  link.click();
+}
+
 Future<void> export() async {
   void status(String msg) {
     querySelector('#exportStatus').text = msg;
   }
+
+  link.text = '';
 
   status('Initializing...');
 
@@ -112,8 +122,7 @@ Future<void> export() async {
 
   var blob = await convertToAudio(buffer);
 
-  (querySelector('#exportResult') as AudioElement).src =
-      Url.createObjectUrlFromBlob(blob);
+  download(blob, 'nightcore.wav');
 
   status('Done!');
 }
@@ -122,8 +131,6 @@ Future<Blob> convertToAudio(AudioBuffer buffer) {
   var completer = Completer<Blob>();
   var worker = Worker('js/converter.js');
   worker.onMessage.listen((event) {
-    print('MESSAGE FROM WORKER');
-    print(event.data);
     if (event.data is Blob) {
       completer.complete(event.data);
     }
