@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:html';
+import 'dart:typed_data';
 import 'dart:web_audio';
 
 import 'dart/audio_player.dart';
@@ -37,12 +38,8 @@ void main() async {
   picker = document.getElementById('picker')
     ..onChange.listen((_) {
       var reader = FileReader();
-      reader.onProgress.listen((event) {
-        print('${event.loaded}/${event.total}');
-      });
       reader.onLoad.listen((event) {
-        print('ON LOAD');
-        player.changeSource(reader.result);
+        player.changeSource((reader.result as Uint8List).buffer);
       });
       reader.readAsArrayBuffer(picker.files[0]);
     });
