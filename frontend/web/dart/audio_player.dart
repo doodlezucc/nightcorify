@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:html';
+import 'dart:typed_data';
+import 'dart:web_audio';
 
 import 'package:meta/meta.dart';
 
 import 'duration.dart';
 import 'input_util.dart';
+import 'nightcore.dart';
 
 class AudioPlayer {
   final SpanElement timeSpan = querySelector('#currentTime');
@@ -13,81 +16,110 @@ class AudioPlayer {
   final Element playButton = document.getElementById('playButton');
   InputElement outVolume;
 
-  final void Function(double v) onVolumeChange;
-  final AudioElement _audio;
+  final NightcoreContext nc;
 
-  num get playbackRate => _audio.playbackRate;
+  num _lastInteractTime = 0; // last context time media was started/stopped
+  num currentTime = 0;
+
+  AudioContext get ctx => nc.ctx;
+  AudioBuffer get buffer => nc.buffer;
+
+  num get playbackRate => nc.playbackRate;
   set playbackRate(num rate) {
-    _audio.playbackRate = rate;
-    updateDuration();
+    if (playing) {
+      currentTime += (ctx.currentTime - _lastInteractTime) * playbackRate;
+    }
+    _lastInteractTime = ctx.currentTime;
+    nc.playbackRate = rate;
+    _updateDuration();
+    _calculateTime();
   }
 
-  AudioPlayer({@required this.onVolumeChange, @required AudioElement audio})
-      : _audio = audio {
-    initPlayPauseButton();
-    initTimeSlider();
-    initDuration();
-    initVolume();
+  bool _playing = false;
+  bool get playing => _playing;
+  set playing(bool v) {
+    _playing = v;
+    playButton.classes.toggle('playing', v);
+    if (v) {
+      nc.play(currentTime);
+    } else {
+      currentTime += ctx.currentTime - _lastInteractTime;
+      nc.stopPlaying();
+    }
+    _lastInteractTime = ctx.currentTime;
   }
 
-  void setSourceUrl(String src) {
-    var rate = _audio.playbackRate;
-    _audio.src = src;
-    _audio.playbackRate = rate;
-    playButton.classes.remove('playing');
+  AudioPlayer({@required this.nc}) {
+    _initPlayPauseButton();
+    _initTimeSlider();
+    _initVolume();
+  }
+
+  Future<void> changeSource(ByteBuffer audioData) async {
+    await nc.setBufferBytes(audioData);
+    _onStop();
+    _updateDuration();
     print('Changed source');
   }
 
-  void initVolume() {
+  void _initVolume() {
     onInput(
       outVolume = document.getElementById('volume'),
-      onVolumeChange,
+      (v) => nc.outputVolume = v,
       writeToSibling: false,
     );
   }
 
-  void initPlayPauseButton() {
-    playButton.onClick.listen((event) {
-      if (_audio.paused) {
-        _audio.play();
-      } else {
-        _audio.pause();
-      }
-    });
-
-    _audio.onPause.listen((_) => playButton.classes.remove('playing'));
-    _audio.onPlay.listen((_) => playButton.classes.add('playing'));
+  void _initPlayPauseButton() {
+    playButton.onClick.listen((_) => playing = !playing);
   }
 
-  void initDuration() {
-    listenApply(_audio.onDurationChange, updateDuration);
+  void _onStop() {
+    currentTime = 0;
+    playButton.classes.remove('playing');
   }
 
-  void updateDuration() {
+  void _updateDuration() {
     durationSpan.text =
-        durationString((_audio.duration / playbackRate).floor());
+        durationString(((buffer?.duration ?? 0) / playbackRate).floor());
   }
 
-  void initTimeSlider() {
+  void _initTimeSlider() {
     var isDraggingTime = false;
     timeSlider.onMouseDown.listen((_) async {
       isDraggingTime = true;
       await document.onMouseUp.first;
-      _audio.currentTime = timeSlider.valueAsNumber * _audio.duration;
+      currentTime = timeSlider.valueAsNumber * buffer.duration;
+      _lastInteractTime = ctx.currentTime;
       isDraggingTime = false;
+      if (playing) {
+        nc.stopPlaying();
+        nc.play(currentTime);
+      }
     });
 
     timeSlider.onInput.listen((_) => setTimeDisplay(
-        timeSlider.valueAsNumber * _audio.duration / playbackRate));
+        timeSlider.valueAsNumber * buffer.duration / playbackRate));
 
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if (!isDraggingTime) {
-        var seconds = _audio.currentTime;
-        timeSlider.valueAsNumber = seconds / _audio.duration;
-        redrawSlider(timeSlider);
-        setTimeDisplay(seconds / playbackRate);
-      }
+      if (!isDraggingTime && playing) _calculateTime();
     });
+  }
+
+  void _calculateTime() {
+    var scaledDuration = (buffer?.duration ?? 0) / playbackRate;
+
+    var seconds =
+        ctx.currentTime - _lastInteractTime + currentTime / playbackRate;
+
+    if (playing && seconds >= scaledDuration) {
+      playing = false;
+      seconds = 0;
+      currentTime = 0;
+    }
+    timeSlider.valueAsNumber = seconds / scaledDuration;
+    redrawSlider(timeSlider);
+    setTimeDisplay(seconds);
   }
 
   void setTimeDisplay(num seconds) {

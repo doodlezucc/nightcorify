@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:html';
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:web_audio';
 
 import 'package:js/js_util.dart' as jsu;
@@ -10,17 +10,43 @@ class NightcoreContext {
   BiquadFilterNode _filter;
   GainNode _amp;
   GainNode _outGain;
-  MediaElementAudioSourceNode _source;
+
+  AudioBuffer _buffer;
+  AudioBuffer get buffer => _buffer;
+  AudioBufferSourceNode _source;
 
   set bassboost(double dB) => _filter.gain.value = dB;
   set amplify(double dB) => _amp.gain.value = pow(10, (dB / 20));
   set outputVolume(double v) => _outGain.gain.value = v;
 
-  NightcoreContext(MediaElement source, {bool offline = false})
-      : ctx = offline ? OfflineAudioContext(2) : AudioContext() {
-    jsu.setProperty(source, 'preservesPitch', false);
+  double _rate = 1;
+  double get playbackRate => _rate;
+  set playbackRate(double rate) {
+    _rate = rate;
+    _source?.playbackRate?.value = rate;
+  }
+
+  NightcoreContext(this.ctx) {
     _outGain = ctx.createGain()..connectNode(ctx.destination);
-    _source = ctx.createMediaElementSource(source);
+  }
+
+  Future<void> setBufferBytes(ByteBuffer audioData) async {
+    _buffer = await ctx.decodeAudioData(audioData);
+  }
+
+  AudioBufferSourceNode play(num offset) {
+    var old = _source;
+    old?.disconnect();
+
+    return _source = ctx.createBufferSource()
+      ..buffer = _buffer
+      ..playbackRate.value = old?.playbackRate?.value ?? 1
+      ..connectNode(_amp)
+      ..start(ctx.currentTime, offset);
+  }
+
+  void stopPlaying() {
+    _source.stop(ctx.currentTime);
   }
 
   Future<void> initialize() {
@@ -38,11 +64,16 @@ class NightcoreContext {
 
       _amp = ctx.createGain()..connectNode(_filter);
 
-      _source.connectNode(_amp);
-
       completer.complete();
     });
 
     return completer.future;
   }
+}
+
+class OfflineNightcoreContext extends NightcoreContext {
+  OfflineNightcoreContext(
+      {AudioBuffer buffer, int sampleRate = 44100, double playbackRate})
+      : super(OfflineAudioContext(
+            2, sampleRate * buffer.duration ~/ playbackRate, sampleRate));
 }
