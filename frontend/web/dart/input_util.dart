@@ -35,7 +35,8 @@ void onInput(InputElement main, void Function(double v) onValueChange,
     sib.onInput.listen((_) {
       apply(sib, main);
     });
-    sib.onBlur.listen((_) => sib.value = main.value);
+    sib.onBlur
+        .listen((_) => sib.value = main.valueAsNumber.toStringAsFixed(digits));
     sib.onKeyDown.listen((e) {
       // Unfocus input on Esc or Enter key
       if (e.keyCode == 13 || e.keyCode == 27) {

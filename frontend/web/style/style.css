@@ -109,10 +109,6 @@ input[type=range]:hover::-moz-range-thumb {
     margin-right: 4px;
 }
 
-input[type=number] {
-    width: 60px;
-}
-
 span {
     display: flex;
     align-items: center;
@@ -136,8 +132,29 @@ span {
     margin-bottom: 8px;
 }
 
-span > * {
+span:not(.effect) > * {
     margin-left: 8px;
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.effect {
+    display: grid;
+    grid-template-columns: 100px auto 50px 24px;
+    gap: 4px;
+}
+.effect > input[type=number] {
+    justify-self: end;
+    text-align: end;
+    width: 40px;
 }
 
 #audioControls {
