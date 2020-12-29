@@ -28,6 +28,7 @@ button, .file-upload {
     background-color: var(--color-main);
     border-radius: 4px;
     padding: 4px 6px;
+    font: inherit;
     font-weight: 500;
     cursor: pointer;
     width: fit-content;
@@ -105,7 +106,7 @@ input[type=range]:hover::-moz-range-thumb {
     display: block;
     text-align: end;
     width: 32px;
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
 span {
@@ -174,4 +175,12 @@ span > * {
 
 #time {
     width: 100%;
+}
+
+.single-section {
+    display: flex;
+    margin: 16px 0;
+}
+.single-section > *:not(:first-child) {
+    margin-left: 4px;
 }

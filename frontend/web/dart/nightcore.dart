@@ -35,12 +35,11 @@ class NightcoreContext {
   }
 
   AudioBufferSourceNode play(num offset) {
-    var old = _source;
-    old?.disconnect();
+    _source?.disconnect();
 
     return _source = ctx.createBufferSource()
       ..buffer = _buffer
-      ..playbackRate.value = old?.playbackRate?.value ?? 1
+      ..playbackRate.value = playbackRate
       ..connectNode(_amp)
       ..start(ctx.currentTime, offset);
   }
@@ -75,5 +74,8 @@ class OfflineNightcoreContext extends NightcoreContext {
   OfflineNightcoreContext(
       {AudioBuffer buffer, int sampleRate = 44100, double playbackRate})
       : super(OfflineAudioContext(
-            2, sampleRate * buffer.duration ~/ playbackRate, sampleRate));
+            2, sampleRate * buffer.duration ~/ playbackRate, sampleRate)) {
+    _buffer = buffer;
+    _rate = playbackRate;
+  }
 }

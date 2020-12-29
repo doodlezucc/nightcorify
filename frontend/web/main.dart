@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:html';
 import 'dart:web_audio';
 
@@ -67,7 +68,7 @@ void main() async {
 
   testAudioRead();
 
-  //querySelector('#export').onClick.listen((_) => export());
+  querySelector('#export').onClick.listen((_) => export());
 
   // Wait for first user interaction so audio context can be started
   await document.onClick.first;
@@ -88,35 +89,55 @@ void testAudioRead() {
   req.send();
 }
 
-// Future<void> export() async {
-//   void status(String msg) {
-//     querySelector('#exportStatus').text = msg;
-//   }
+Future<void> export() async {
+  void status(String msg) {
+    querySelector('#exportStatus').text = msg;
+  }
 
-//   var offNc = OfflineNightcoreContext(
-//     buffer: buffer,
-//   );
-//   status('Initializing...');
-//   await offNc.initialize();
-//   offNc
-//     ..amplify = amplify.valueAsNumber
-//     ..bassboost = bassboost.valueAsNumber;
-//   OfflineAudioContext ctx = offNc.ctx;
-//   status('Rendering...');
-//   var buffer = await ctx.startRendering();
-//   status('Exporting to WAV...');
-//   convertToAudio(buffer);
-//   // (querySelector('#exportResult') as AudioElement).src =
-//   //     Url.createObjectUrlFromBlob(buffer);
-// }
+  status('Initializing...');
 
-void convertToAudio(AudioBuffer buffer) {
+  var offNc = OfflineNightcoreContext(
+    buffer: player.buffer,
+    playbackRate: player.playbackRate,
+  );
+
+  await offNc.initialize();
+  offNc
+    ..amplify = amplify.valueAsNumber
+    ..bassboost = bassboost.valueAsNumber
+    ..play(0);
+
+  status('Rendering...');
+
+  var buffer = await (offNc.ctx as OfflineAudioContext).startRendering();
+
+  status('Exporting to WAV...');
+
+  var blob = await convertToAudio(buffer);
+
+  (querySelector('#exportResult') as AudioElement).src =
+      Url.createObjectUrlFromBlob(blob);
+
+  status('Done!');
+}
+
+Future<Blob> convertToAudio(AudioBuffer buffer) {
+  var completer = Completer<Blob>();
   var worker = Worker('js/converter.js');
   worker.onMessage.listen((event) {
     print('MESSAGE FROM WORKER');
     print(event.data);
+    if (event.data is Blob) {
+      completer.complete(event.data);
+    }
   });
-  worker.postMessage(buffer);
+  worker.postMessage({
+    'sampleRate': buffer.sampleRate,
+    'channelL': buffer.getChannelData(0),
+    'channelR': buffer.getChannelData(1),
+  });
+
+  return completer.future;
 }
 
 void sendRequest(String action, [dynamic body]) {

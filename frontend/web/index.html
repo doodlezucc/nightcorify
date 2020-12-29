@@ -39,11 +39,17 @@
     <button id="playButton"></button>
     <span id="currentTime">0:00</span>
     <input type="range" id="time" min="0" max="1" value="0.5" step="0.001">
-    <span id="duration">3:49</span>
+    <span id="duration">0:00</span>
     <input type="range" id="volume" min="0" max="1" value="0.2" step="0.0001">
   </div>
 
-  <audio src="faber.mp3"></audio>
+  <div class="single-section">
+    <button id="export">Export</button>
+    <span id="exportStatus"></span>
+    <audio id="exportResult" controls></audio>
+  </div>
+
+  <audio id="input" src="faber.mp3"></audio>
 </body>
 
 </html>
