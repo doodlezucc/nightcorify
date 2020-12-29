@@ -43,7 +43,7 @@ class AudioPlayer {
     if (v) {
       nc.play(currentTime);
     } else {
-      currentTime += ctx.currentTime - _lastInteractTime;
+      currentTime += (ctx.currentTime - _lastInteractTime) * playbackRate;
       nc.stopPlaying();
     }
     _lastInteractTime = ctx.currentTime;
