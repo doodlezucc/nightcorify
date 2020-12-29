@@ -10,12 +10,11 @@ class AudioPlayer {
   final SpanElement timeSpan = querySelector('#currentTime');
   final InputElement timeSlider = querySelector('#time');
   final SpanElement durationSpan = querySelector('#duration');
+  final Element playButton = document.getElementById('playButton');
   InputElement outVolume;
 
   final void Function(double v) onVolumeChange;
   final AudioElement _audio;
-
-  bool _playing = false;
 
   num get playbackRate => _audio.playbackRate;
   set playbackRate(num rate) {
@@ -47,15 +46,16 @@ class AudioPlayer {
   }
 
   void initPlayPauseButton() {
-    document.getElementById('playButton').onClick.listen((event) {
-      _playing = !_playing;
-      (event.target as Element).classes.toggle('playing', _playing);
-      if (_playing) {
+    playButton.onClick.listen((event) {
+      if (_audio.paused) {
         _audio.play();
       } else {
         _audio.pause();
       }
     });
+
+    _audio.onPause.listen((_) => playButton.classes.remove('playing'));
+    _audio.onPlay.listen((_) => playButton.classes.add('playing'));
   }
 
   void initDuration() {
