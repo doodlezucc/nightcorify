@@ -123,12 +123,11 @@ span > * {
     align-items: center;
     border-radius: 1000px;
     padding: 4px;
-    /* grid-template-columns: min-content min-content auto min-content min-content; */
 }
 
 #audioControls > span {
     display: block;
-    width: 200px;
+    width: 120px;
     margin: 0 8px;
 }
 #audioControls > span:first-of-type {

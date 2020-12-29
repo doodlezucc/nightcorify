@@ -32,7 +32,9 @@ class AudioPlayer {
   }
 
   void setSourceUrl(String src) {
+    var rate = _audio.playbackRate;
     _audio.src = src;
+    _audio.playbackRate = rate;
     print('Changed source');
   }
 
