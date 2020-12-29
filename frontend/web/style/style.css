@@ -10,11 +10,15 @@ body {
     background-color: #111;
     color: white;
     font-family: 'Montserrat', sans-serif;
-    --color-main: #5d79ff
+    --color-main: #5d79ff;
 }
 body, .section {
     display: inline-flex;
     flex-direction: column;
+}
+
+::selection {
+    background-color: #8c9fff;
 }
 
 h1 {
@@ -129,7 +133,7 @@ span, a {
 }
 
 .section {
-    border: 2px solid white;
+    border: 2px solid #bbb;
     padding: 12px;
     margin-bottom: 16px;
     /* border-radius: 0 32px 0 0; */
@@ -165,7 +169,7 @@ input::-webkit-inner-spin-button {
 }
 
 #audioControls {
-    border: 2px solid white;
+    border: 2px solid #bbb;
     display: flex;
     align-items: center;
     border-radius: 1000px;
