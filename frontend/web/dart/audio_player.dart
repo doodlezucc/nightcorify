@@ -107,7 +107,7 @@ class AudioPlayer {
   }
 
   void _calculateTime() {
-    var scaledDuration = (buffer?.duration ?? 0) / playbackRate;
+    var scaledDuration = (buffer?.duration ?? 1) / playbackRate;
 
     var seconds =
         ctx.currentTime - _lastInteractTime + currentTime / playbackRate;
