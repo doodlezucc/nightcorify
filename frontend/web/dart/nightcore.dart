@@ -52,7 +52,7 @@ class NightcoreContext {
     var completer = Completer();
 
     var worklet = jsu.getProperty(ctx, 'audioWorklet');
-    jsu.callMethod(worklet, 'addModule', ['./clipper.js']).then(() {
+    jsu.callMethod(worklet, 'addModule', ['../js/clipper.js']).then(() {
       var clipper = AudioWorkletNode(ctx, 'clipper')..connectNode(_outGain);
 
       _filter = ctx.createBiquadFilter()
