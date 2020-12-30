@@ -145,11 +145,11 @@ Future<Blob> convertToAudio(AudioBuffer buffer) {
   return completer.future;
 }
 
-Future<dynamic> sendRequest(String path, String responseType) {
-  void displayError() {
-    print('bruh');
-  }
+void displayError() {
+  print('bruh');
+}
 
+Future<dynamic> sendRequest(String path, String responseType) {
   var completer = Completer();
 
   var req = HttpRequest()..open('GET', '$domain/nightcore/$path', async: true);
@@ -170,10 +170,16 @@ Future<dynamic> sendRequest(String path, String responseType) {
 }
 
 Future<void> requestYouTubeAudio(String query, [dynamic body]) async {
+  var oldName = player.fileName;
   player.fileName = 'Searching...';
   var info = await sendRequest('info?q=$query', 'json');
-  var audio = await sendRequest('audio?id=' + info['id'], 'arraybuffer');
-  await player.changeSource(audio, info['title']);
+  if (info == null) {
+    player.fileName = oldName;
+    displayError();
+  } else {
+    var audio = await sendRequest('audio?id=' + info['id'], 'arraybuffer');
+    await player.changeSource(audio, info['title']);
+  }
 }
 
 void onUrl() {
