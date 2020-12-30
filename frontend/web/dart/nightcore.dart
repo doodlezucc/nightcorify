@@ -45,7 +45,7 @@ class NightcoreContext {
   }
 
   void stopPlaying() {
-    _source.stop(ctx.currentTime);
+    _source?.stop(ctx.currentTime);
   }
 
   Future<void> initialize() {

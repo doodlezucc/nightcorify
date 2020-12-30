@@ -63,8 +63,10 @@ class AudioPlayer {
     fileName = 'Loading...';
     await nc.setBufferBytes(audioData);
     fileName = name;
+    playing = false;
     _onStop();
     _updateDuration();
+    _calculateTime();
     print('Changed source');
   }
 
