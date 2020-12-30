@@ -80,6 +80,10 @@ String getMimeType(File f) {
       return 'text/css';
     case '.js':
       return 'text/javascript';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.mp3':
+      return 'audio/mpeg';
   }
   return '';
 }
@@ -105,6 +109,23 @@ Future<String> youtubeInfo(String query) async {
   print('YTDL Exit Code: $exitCode');
 
   return s;
+}
+
+Future<File> convertToMp3(File input) async {
+  var output = File(input.path + '.mp3');
+  var arguments = [
+    '-i',
+    input.path,
+    output.path,
+  ];
+  print(arguments);
+  var process = await Process.start('ffmpeg', arguments);
+  process.stderr.listen((data) => stdout.add(data));
+
+  var exitCode = await process.exitCode;
+  print('FFMPEG Exit Code: $exitCode');
+
+  return output;
 }
 
 var client = http.Client();
@@ -133,15 +154,22 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
       if (await file.exists()) {
         return shelf.Response.ok(file.openRead());
       }
+    } else if (action == 'convert') {
+      var input = uniqueFile();
+      await input.openWrite().addStream(request.read());
+      var output = await convertToMp3(input);
+
+      if (await output.exists()) {
+        return shelf.Response.ok(output.openRead());
+      }
     }
   }
 
-  var file = File('frontend/' + request.url.path);
+  var file = File('frontend/build/' + request.url.path);
   if (await file.exists()) {
     var type = getMimeType(file);
-    return shelf.Response(
-      200,
-      body: file.openRead(),
+    return shelf.Response.ok(
+      file.openRead(),
       headers: {'Content-Type': type},
     );
   }

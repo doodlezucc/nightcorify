@@ -67,7 +67,8 @@ void main() async {
 
   testAudioRead();
 
-  querySelector('#export').onClick.listen((_) => export());
+  querySelector('#exportWav').onClick.listen((_) => export(mp3: false));
+  querySelector('#exportMp3').onClick.listen((_) => export(mp3: true));
 
   // Wait for first user interaction so audio context can be started
   await document.onClick.first;
@@ -95,7 +96,7 @@ void download(Blob blob, String name) async {
   link.click();
 }
 
-Future<void> export() async {
+Future<void> export({bool mp3 = false}) async {
   void status(String msg) {
     querySelector('#exportStatus').text = msg;
   }
@@ -123,7 +124,19 @@ Future<void> export() async {
 
   var blob = await convertToAudio(buffer);
 
-  download(blob, 'nightcore.wav');
+  if (mp3) {
+    status('Converting to MP3...');
+    blob = Blob([
+      await sendRequest(
+        'convert',
+        'arraybuffer',
+        body: blob,
+        method: 'POST',
+      )
+    ]);
+  }
+
+  download(blob, 'nightcore.' + (mp3 ? 'mp3' : 'wav'));
 
   status('Done!');
 }
@@ -149,10 +162,11 @@ void displayError() {
   print('bruh');
 }
 
-Future<dynamic> sendRequest(String path, String responseType) {
+Future<dynamic> sendRequest(String path, String responseType,
+    {dynamic body, String method = 'GET'}) {
   var completer = Completer();
 
-  var req = HttpRequest()..open('GET', '$domain/nightcore/$path', async: true);
+  var req = HttpRequest()..open(method, '$domain/nightcore/$path', async: true);
 
   req.onLoad.listen((event) {
     if (req.status >= 200 && req.status < 300) {
@@ -164,7 +178,7 @@ Future<dynamic> sendRequest(String path, String responseType) {
   });
   req.onError.listen((_) => displayError());
   req.responseType = responseType;
-  req.send();
+  req.send(body);
 
   return completer.future;
 }
