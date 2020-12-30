@@ -7,7 +7,9 @@ import 'dart/audio_player.dart';
 import 'dart/nightcore.dart';
 import 'dart/input_util.dart';
 
-const domain = 'http://localhost:808';
+const buildMode = true;
+const useTestAudio = !buildMode;
+const domain = buildMode ? '' : 'http://localhost:7070';
 
 final AnchorElement link = querySelector('#download');
 InputElement urlInput;
@@ -65,7 +67,7 @@ void main() async {
     (v) => nc.bassboost = v,
   );
 
-  testAudioRead();
+  if (useTestAudio) testAudioRead();
 
   querySelector('#exportWav').onClick.listen((_) => export(mp3: false));
   querySelector('#exportMp3').onClick.listen((_) => export(mp3: true));
@@ -76,7 +78,7 @@ void main() async {
 }
 
 void testAudioRead() {
-  var req = HttpRequest()..open('GET', 'faber.mp3', async: true);
+  var req = HttpRequest()..open('GET', 'test.mp3', async: true);
 
   req.onLoad.listen((event) {
     if (req.status >= 200 && req.status < 300) {
