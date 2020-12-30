@@ -13,7 +13,8 @@ class AudioPlayer {
   final SpanElement timeSpan = querySelector('#currentTime');
   final InputElement timeSlider = querySelector('#time');
   final SpanElement durationSpan = querySelector('#duration');
-  final Element playButton = document.getElementById('playButton');
+  final Element playButton = querySelector('#playButton');
+  final SpanElement nameSpan = querySelector('#fileName');
   InputElement outVolume;
 
   final NightcoreContext nc;
@@ -49,14 +50,19 @@ class AudioPlayer {
     _lastInteractTime = ctx.currentTime;
   }
 
+  String get fileName => nameSpan.text;
+  set fileName(String s) => nameSpan.text = s;
+
   AudioPlayer({@required this.nc}) {
     _initPlayPauseButton();
     _initTimeSlider();
     _initVolume();
   }
 
-  Future<void> changeSource(ByteBuffer audioData) async {
+  Future<void> changeSource(ByteBuffer audioData, String name) async {
+    fileName = 'Loading...';
     await nc.setBufferBytes(audioData);
+    fileName = name;
     _onStop();
     _updateDuration();
     print('Changed source');

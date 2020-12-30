@@ -40,7 +40,8 @@ void main() async {
     ..onChange.listen((_) {
       var reader = FileReader();
       reader.onLoad.listen((event) {
-        player.changeSource((reader.result as Uint8List).buffer);
+        player.changeSource(
+            (reader.result as Uint8List).buffer, picker.files[0].name);
       });
       reader.readAsArrayBuffer(picker.files[0]);
     });
@@ -78,7 +79,7 @@ void testAudioRead() {
 
   req.onLoad.listen((event) {
     if (req.status >= 200 && req.status < 300) {
-      player.changeSource(req.response);
+      player.changeSource(req.response, 'Test Audio');
     } else {
       print(req.status.toString() + ' | ' + req.statusText);
     }
@@ -144,30 +145,40 @@ Future<Blob> convertToAudio(AudioBuffer buffer) {
   return completer.future;
 }
 
-void sendRequest(String action, [dynamic body]) {
+Future<dynamic> sendRequest(String path, String responseType) {
   void displayError() {
     print('bruh');
   }
 
-  var req = HttpRequest()
-    ..open('GET', '$domain/nightcore/' + action, async: true);
+  var completer = Completer();
+
+  var req = HttpRequest()..open('GET', '$domain/nightcore/$path', async: true);
 
   req.onLoad.listen((event) {
     if (req.status >= 200 && req.status < 300) {
-      player.changeSource(req.response);
+      completer.complete(req.response);
     } else {
-      print(req.status.toString() + ' | ' + req.statusText);
+      completer.complete();
       displayError();
     }
   });
-  req.onError.listen((event) => displayError());
-  req.responseType = 'arraybuffer';
+  req.onError.listen((_) => displayError());
+  req.responseType = responseType;
   req.send();
+
+  return completer.future;
+}
+
+Future<void> requestYouTubeAudio(String query, [dynamic body]) async {
+  player.fileName = 'Searching...';
+  var info = await sendRequest('info?q=$query', 'json');
+  var audio = await sendRequest('audio?id=' + info['id'], 'arraybuffer');
+  await player.changeSource(audio, info['title']);
 }
 
 void onUrl() {
   var text = urlInput.value;
   if (text.isNotEmpty) {
-    sendRequest('youtube?q=' + text);
+    requestYouTubeAudio(text);
   }
 }

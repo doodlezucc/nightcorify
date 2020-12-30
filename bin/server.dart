@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
@@ -82,25 +84,30 @@ String getMimeType(File f) {
   return '';
 }
 
-Future<File> youtubeToFile(String query) async {
-  var file = uniqueFile();
+final audioFiles = <String, File>{};
+
+Future<String> youtubeInfo(String query) async {
   var arguments = [
     '-f',
-    'bestaudio[filesize<40M]',
-    '-w',
+    'bestaudio',
+    '--print-json',
     '-o',
-    file.path,
+    'jobs/%(id)s',
     query.startsWith('http') ? query : 'ytsearch1:$query'
   ];
   print(arguments);
   var process = await Process.start('youtube-dl', arguments);
-  process.stdout.listen((data) => stdout.add(data));
+  String s;
+  process.stdout.listen((data) => s = utf8.decode(data));
   process.stderr.listen((data) => stderr.add(data));
 
   var exitCode = await process.exitCode;
   print('YTDL Exit Code: $exitCode');
-  return file;
+
+  return s;
 }
+
+var client = http.Client();
 
 Future<shelf.Response> _echoRequest(shelf.Request request) async {
   if (request.method == 'OPTIONS') {
@@ -111,18 +118,21 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
     return shelf.Response.seeOther('index.html');
   } else if (request.url.path.startsWith('nightcore/')) {
     var action = request.url.path.substring(10);
-    if (action == 'upload') {
-      var file = await dataToFile(await request.read().reduce((a, b) => a + b));
+    var params = request.url.queryParameters;
 
-      return await nightcorifyFileResponse(file);
-    } else if (action.startsWith('youtube')) {
-      var file = await youtubeToFile(request.url.queryParameters['q']);
+    if (action == 'info' && params.containsKey('q')) {
+      var j = await youtubeInfo(params['q']);
+
+      return shelf.Response.ok(
+        j,
+        headers: {'Content-Type': 'application/json'},
+      );
+    } else if (action == 'audio' && params.containsKey('id')) {
+      var file = File('jobs/' + params['id']);
 
       if (await file.exists()) {
         return shelf.Response.ok(file.openRead());
       }
-      return shelf.Response.internalServerError(
-          body: 'No file was downloaded.');
     }
   }
 
@@ -136,5 +146,5 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
     );
   }
 
-  return shelf.Response.ok('Request for "${request.url}"');
+  return shelf.Response.notFound('"${request.url}" not found :c');
 }
