@@ -48,25 +48,20 @@ class NightcoreContext {
     _source?.stop(ctx.currentTime);
   }
 
-  Future<void> initialize() {
-    var completer = Completer();
-
+  Future<void> initialize() async {
     var worklet = jsu.getProperty(ctx, 'audioWorklet');
-    jsu.callMethod(worklet, 'addModule', ['../js/clipper.js']).then(() {
-      var clipper = AudioWorkletNode(ctx, 'clipper')..connectNode(_outGain);
+    var promise = jsu.callMethod(worklet, 'addModule', ['../js/clipper.js']);
+    await jsu.promiseToFuture(promise);
 
-      _filter = ctx.createBiquadFilter()
-        ..type = 'peaking'
-        ..frequency.value = 60
-        ..Q.value = 0.9
-        ..connectNode(clipper);
+    var clipper = AudioWorkletNode(ctx, 'clipper')..connectNode(_outGain);
 
-      _amp = ctx.createGain()..connectNode(_filter);
+    _filter = ctx.createBiquadFilter()
+      ..type = 'peaking'
+      ..frequency.value = 60
+      ..Q.value = 0.9
+      ..connectNode(clipper);
 
-      completer.complete();
-    });
-
-    return completer.future;
+    _amp = ctx.createGain()..connectNode(_filter);
   }
 }
 
