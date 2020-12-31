@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Update GitHub page
 
 # Controls when the action will run. 
 on:
@@ -34,3 +34,5 @@ jobs:
           build_dir: frontend/web
           # Allow Jekyll to build our site
           jekyll: false # optional, default is true 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
