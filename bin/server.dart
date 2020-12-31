@@ -165,13 +165,6 @@ Future<shelf.Response> _echoRequest(shelf.Request request) async {
     }
   }
 
-  if (request.url.path.endsWith('main.dart.js')) {
-    return shelf.Response.ok(
-      File('frontend/build/main.dart.js').openRead(),
-      headers: {'Content-Type': 'text/javascript'},
-    );
-  }
-
   var file = File('frontend/web/' + request.url.path);
   if (await file.exists()) {
     var type = getMimeType(file);
