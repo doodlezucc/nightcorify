@@ -7,9 +7,9 @@ import 'dart/audio_player.dart';
 import 'dart/nightcore.dart';
 import 'dart/input_util.dart';
 
-const buildMode = true;
-const useTestAudio = !buildMode;
-const domain = buildMode ? '' : 'http://localhost:7070';
+const bool buildMode = true;
+const bool useTestAudio = !buildMode;
+String domain = buildMode ? '' : 'http://localhost:7070';
 
 final AnchorElement link = querySelector('#download');
 InputElement urlInput;
@@ -24,10 +24,20 @@ AudioPlayer player;
 
 AudioBuffer buffer;
 
+final serverNeeded = querySelectorAll('.needs-server');
+
 void main() async {
   querySelector('#output').text = "doodlezucc's";
 
   registerAllSliders();
+
+  var serverParam = Uri.parse(window.location.href).queryParameters['server'];
+  if (domain.isEmpty && serverParam != null) {
+    domain = serverParam;
+    toggleServerFunctions(true);
+  } else {
+    toggleServerFunctions(false);
+  }
 
   nc = NightcoreContext(AudioContext());
 
@@ -75,6 +85,20 @@ void main() async {
   // Wait for first user interaction so audio context can be started
   await document.onClick.first;
   await nc.ctx.resume();
+}
+
+void toggleServerFunctions(bool enabled) {
+  serverNeeded
+    ..forEach((e) {
+      e
+        ..classes.toggle('needs-server', !enabled)
+        ..title = enabled ? '' : 'This feature requires a server.';
+      if (enabled) {
+        e.removeAttribute('disabled');
+      } else {
+        e.setAttribute('disabled', '');
+      }
+    });
 }
 
 void testAudioRead() {

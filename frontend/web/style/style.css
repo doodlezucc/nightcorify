@@ -32,9 +32,11 @@ button, .file-upload {
     padding: 4px 6px;
     font: inherit;
     font-weight: 500;
-    cursor: pointer;
     width: fit-content;
     transition: 0.1s;
+}
+button:enabled {
+    cursor: pointer;
 }
 button:hover, .file-upload:hover,
 button:focus, input[type=file]:focus + label {
@@ -56,7 +58,7 @@ input {
     color: white;
     transition-duration: 0.1s;
 }
-input:hover, input:focus {
+input:enabled:hover, input:focus {
     border-color: white;
 }
 
@@ -123,6 +125,15 @@ a:active {
 
 span, a {
     align-items: center;
+}
+
+.needs-server {
+    opacity: 0.6;
+    user-select: none;
+    text-decoration: line-through;
+}
+button.needs-server {
+    background-color: #aaa !important;
 }
 
 .content {

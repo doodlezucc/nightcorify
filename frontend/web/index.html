@@ -21,8 +21,8 @@
   <div class="content">
     <div class="section">
       <h2>Input</h2>
-      <span>Enter a search query or YouTube URL:<input type="text" id="url"
-          placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"></span>
+      <span class="needs-server">Enter a search query or YouTube URL:
+        <input type="text" id="url" class="needs-server" placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"></span>
       <span>or
         <input type="file" id="picker">
         <label class="file-upload" for="picker">Upload your own file</label>
@@ -57,7 +57,7 @@
 
     <div class="single-section">
       <button id="exportWav">Render to WAV</button>
-      <button id="exportMp3">Render to MP3</button>
+      <button id="exportMp3" class="needs-server">Render to MP3</button>
       <span id="exportStatus"></span>
       <a id="download"></a>
     </div>
