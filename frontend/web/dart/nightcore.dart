@@ -48,10 +48,7 @@ class NightcoreContext {
   }
 
   Future<void> initialize() async {
-    print(ctx);
-    print(jsu.getProperty);
     var worklet = jsu.getProperty(ctx, 'audioWorklet');
-    print(worklet);
     var promise = jsu.callMethod(worklet, 'addModule', ['../js/clipper.js']);
     await jsu.promiseToFuture(promise);
 
