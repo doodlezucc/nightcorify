@@ -35,7 +35,7 @@ button, .file-upload {
     width: fit-content;
     transition: 0.1s;
 }
-button:enabled {
+button:enabled, .file-upload {
     cursor: pointer;
 }
 button:hover, .file-upload:hover,

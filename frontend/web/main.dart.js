@@ -11117,7 +11117,7 @@
               t1 = $async$self.ctx;
               worklet = t1.audioWorklet;
               $async$goto = 2;
-              return P._asyncAwait(P.promiseToFuture(worklet.addModule.apply(worklet, H.setRuntimeTypeInfo(["../js/clipper.js"], type$.JSArray_legacy_Object)), type$.dynamic), $async$initialize$0);
+              return P._asyncAwait(P.promiseToFuture(worklet.addModule.apply(worklet, H.setRuntimeTypeInfo(["./js/clipper.js"], type$.JSArray_legacy_Object)), type$.dynamic), $async$initialize$0);
             case 2:
               // returning from await.
               clipper = P.AudioWorkletNode_AudioWorkletNode(t1, "clipper");
