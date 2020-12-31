@@ -11,9 +11,7 @@ body {
     color: white;
     font-family: 'Montserrat', sans-serif;
     --color-main: #5d79ff;
-}
-body, .section {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
 }
 
@@ -127,6 +125,13 @@ span, a {
     align-items: center;
 }
 
+.content {
+    align-self: center;
+    display: inline-flex;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
 #url {
     margin-left: 8px;
     min-width: 350px;
@@ -135,7 +140,9 @@ span, a {
 .section {
     border: 2px solid #bbb;
     padding: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
+    display: inline-flex;
+    flex-direction: column;
     /* border-radius: 0 32px 0 0; */
 }
 .section > h2 {

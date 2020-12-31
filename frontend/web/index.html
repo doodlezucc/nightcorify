@@ -18,47 +18,49 @@
 
   <h1>Nightcorify</h1>
 
-  <div class="section">
-    <h2>Input</h2>
-    <span>Enter a search query or YouTube URL:<input type="text" id="url"
-        placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"></span>
-    <span>or
-      <input type="file" id="picker">
-      <label class="file-upload" for="picker">Upload your own file</label>
-    </span>
-  </div>
+  <div class="content">
+    <div class="section">
+      <h2>Input</h2>
+      <span>Enter a search query or YouTube URL:<input type="text" id="url"
+          placeholder="e.g. https://youtu.be/dQw4w9WgXcQ"></span>
+      <span>or
+        <input type="file" id="picker">
+        <label class="file-upload" for="picker">Upload your own file</label>
+      </span>
+    </div>
 
-  <div class="section">
-    <h2>Effects</h2>
-    <span class="effect">
-      Speed:<input type="range" id="rate" min="0.5" max="4" value="1" step="0.01">
-      <input type="number">x
-    </span>
-    <span class="effect">
-      Amplify:<input type="range" id="amplify" min="0" max="100" value="0">
-      <input type="number">dB
-    </span>
-    <span class="effect">
-      Bass boost:<input type="range" id="bass" min="0" max="30" value="0">
-      <input type="number">dB
-    </span>
-  </div>
+    <div class="section">
+      <h2>Effects</h2>
+      <span class="effect">
+        Speed:<input type="range" id="rate" min="0.5" max="4" value="1" step="0.01">
+        <input type="number">x
+      </span>
+      <span class="effect">
+        Amplify:<input type="range" id="amplify" min="0" max="100" value="0">
+        <input type="number">dB
+      </span>
+      <span class="effect">
+        Bass boost:<input type="range" id="bass" min="0" max="30" value="0">
+        <input type="number">dB
+      </span>
+    </div>
 
-  <span id="fileName">No audio file loaded.</span>
+    <span id="fileName">No audio file loaded.</span>
 
-  <div id="audioControls">
-    <button id="playButton"></button>
-    <span id="currentTime">0:00</span>
-    <input type="range" id="time" min="0" max="1" value="0.5" step="0.001">
-    <span id="duration">0:00</span>
-    <input type="range" id="volume" min="0" max="1" value="0.2" step="0.01">
-  </div>
+    <div id="audioControls">
+      <button id="playButton"></button>
+      <span id="currentTime">0:00</span>
+      <input type="range" id="time" min="0" max="1" value="0.5" step="0.001">
+      <span id="duration">0:00</span>
+      <input type="range" id="volume" min="0" max="1" value="0.2" step="0.01">
+    </div>
 
-  <div class="single-section">
-    <button id="exportWav">Render to WAV</button>
-    <button id="exportMp3">Render to MP3</button>
-    <span id="exportStatus"></span>
-    <a id="download"></a>
+    <div class="single-section">
+      <button id="exportWav">Render to WAV</button>
+      <button id="exportMp3">Render to MP3</button>
+      <span id="exportStatus"></span>
+      <a id="download"></a>
+    </div>
   </div>
 </body>
 
