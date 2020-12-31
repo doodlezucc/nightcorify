@@ -9,7 +9,8 @@ import 'dart/input_util.dart';
 
 const bool buildMode = true;
 const bool useTestAudio = !buildMode;
-String domain = buildMode ? '' : 'http://localhost:7070';
+final bool isGitHub = window.location.href.contains('.github.io');
+String domain = isGitHub ? null : (buildMode ? '' : 'http://localhost:7070');
 
 final AnchorElement link = querySelector('#download');
 InputElement urlInput;
@@ -33,8 +34,8 @@ void main() async {
   registerAllSliders();
 
   var serverParam = Uri.parse(window.location.href).queryParameters['server'];
-  if (domain.isEmpty && serverParam != null) {
-    domain = serverParam;
+  if (domain != null || serverParam != null) {
+    domain = domain ?? serverParam;
     toggleServerFunctions(true);
   } else {
     toggleServerFunctions(false);
