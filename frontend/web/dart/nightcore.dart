@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:web_audio';
-
-import 'package:js/js_util.dart' as jsu;
+import 'dart:js_util' as jsu;
 
 class NightcoreContext {
   final BaseAudioContext ctx;
@@ -49,7 +48,10 @@ class NightcoreContext {
   }
 
   Future<void> initialize() async {
+    print(ctx);
+    print(jsu.getProperty);
     var worklet = jsu.getProperty(ctx, 'audioWorklet');
+    print(worklet);
     var promise = jsu.callMethod(worklet, 'addModule', ['../js/clipper.js']);
     await jsu.promiseToFuture(promise);
 
