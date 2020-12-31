@@ -174,16 +174,27 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
+input[type=checkbox] {
+    filter: hue-rotate(25deg) brightness(1.1);
+}
 
 .effect {
     display: grid;
-    grid-template-columns: 100px auto 50px 24px;
+    grid-template-columns: 130px auto 50px 24px;
     gap: 4px;
 }
 .effect > input[type=number] {
     justify-self: end;
     text-align: end;
     width: 40px;
+}
+
+.info {
+    opacity: 0.4;
+    transition-duration: 0.1s;
+}
+.hidden {
+    opacity: 0;
 }
 
 #fileName {

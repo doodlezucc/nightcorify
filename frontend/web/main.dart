@@ -15,6 +15,7 @@ final AnchorElement link = querySelector('#download');
 InputElement urlInput;
 InputElement picker;
 
+InputElement useLimiter;
 InputElement rate;
 InputElement amplify;
 InputElement bassboost;
@@ -67,6 +68,14 @@ void main() async {
     rate = document.getElementById('rate'),
     (v) => player.playbackRate = v,
     digits: 2,
+  );
+  listenApply(
+    (useLimiter = document.getElementById('useLimiter')).onChange,
+    () {
+      var use = useLimiter.checked;
+      useLimiter.nextElementSibling.classes.toggle('hidden', use);
+      return nc.useLimiter = use;
+    },
   );
   onInput(
     amplify = document.getElementById('amplify'),
@@ -140,6 +149,7 @@ Future<void> export({bool mp3 = false}) async {
   offNc
     ..amplify = amplify.valueAsNumber
     ..bassboost = bassboost.valueAsNumber
+    ..useLimiter = useLimiter.checked
     ..play(0);
 
   status('Rendering...');
