@@ -3,6 +3,8 @@ import 'dart:html';
 import 'dart:typed_data';
 import 'dart:web_audio';
 
+import 'package:path/path.dart' as path;
+
 import 'dart/audio_player.dart';
 import 'dart/nightcore.dart';
 import 'dart/input_util.dart';
@@ -10,7 +12,11 @@ import 'dart/input_util.dart';
 const bool buildMode = true;
 const bool useTestAudio = !buildMode;
 final bool isGitHub = window.location.href.contains('.github.io');
-String domain = isGitHub ? null : (buildMode ? '' : 'http://localhost:7070');
+String domain = isGitHub
+    ? null
+    : (buildMode
+        ? path.dirname(window.location.href)
+        : 'http://localhost:7070');
 
 final AnchorElement link = querySelector('#download');
 InputElement urlInput;
