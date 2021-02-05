@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Montserrat:wght@400;500&display=swap');
+
+html, body {
+    margin: 0;
+}
+
+body {
+    margin: 32px;
+    box-sizing: border-box;
+    background-color: #111;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    --color-main: #5d79ff;
+    display: flex;
+    flex-direction: column;
+}
+
+::selection {
+    background-color: #8c9fff;
+}
+
+h1 {
+    font-family: 'Arvo', serif;
+    margin-top: 0;
+    color: var(--color-main);
+}
+
+button, .file-upload {
+    color: black;
+    background-color: var(--color-main);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font: inherit;
+    font-weight: 500;
+    width: fit-content;
+    transition: 0.1s;
+}
+button:enabled, .file-upload {
+    cursor: pointer;
+}
+button:hover, .file-upload:hover,
+button:focus, input[type=file]:focus + label {
+    background-color: white;
+}
+button:active, .file-upload:active {
+    background-color: #bbb;
+}
+
+input, button {
+    outline: none;
+    border: none;
+}
+
+input {
+    font: inherit;
+    background: none;
+    border-bottom: 1px solid #aaa;
+    color: white;
+    transition-duration: 0.1s;
+}
+input:enabled:hover, input:focus {
+    border-color: white;
+}
+
+input[type=file] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    margin-top: 4px;
+    outline: none;
+}
+
+input[type=range] {
+    vertical-align: bottom;
+    appearance: none;
+    height: 2px;
+    background: #ccc;
+    border: none;
+    cursor: pointer;
+    border-radius: 100px;
+}
+input[type=range]:focus {
+    height: 5px;
+}
+input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color-main);
+    transition-duration: 0.1s;
+}
+input[type=range]::-moz-range-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color-main);
+    transition-duration: 0.1s;
+    border: none;
+}
+input[type=range]:hover::-webkit-slider-thumb {
+    background-color: white;
+}
+input[type=range]:hover::-moz-range-thumb {
+    background-color: white;
+}
+.section input[type=range] + span {
+    text-align: end;
+    width: 32px;
+    margin-right: 4px;
+}
+
+a {
+    color: var(--color-main);
+    transition-duration: 0.1s;
+}
+a:hover {
+    color: white;
+}
+a:active {
+    color: #bbb;
+}
+
+span, a {
+    align-items: center;
+}
+
+.needs-server {
+    opacity: 0.6;
+    user-select: none;
+    text-decoration: line-through;
+}
+button.needs-server {
+    background-color: #aaa !important;
+}
+
+.content {
+    align-self: center;
+    display: inline-flex;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
+#url {
+    margin-left: 8px;
+    min-width: 350px;
+}
+
+.section {
+    border: 2px solid #bbb;
+    padding: 12px;
+    margin-bottom: 32px;
+    display: inline-flex;
+    flex-direction: column;
+    /* border-radius: 0 32px 0 0; */
+}
+.section > h2 {
+    font-family: 'Arvo', serif;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+.section > span:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+input[type=checkbox] {
+    filter: hue-rotate(25deg) brightness(1.1);
+}
+
+.effect {
+    display: grid;
+    grid-template-columns: 130px auto 50px 24px;
+    gap: 4px;
+}
+.effect > input[type=number] {
+    justify-self: end;
+    text-align: end;
+    width: 40px;
+}
+
+.info {
+    opacity: 0.4;
+    transition-duration: 0.1s;
+}
+.hidden {
+    opacity: 0;
+}
+
+#fileName {
+    align-self: center;
+}
+
+#audioControls {
+    border: 2px solid #bbb;
+    display: flex;
+    align-items: center;
+    border-radius: 1000px;
+    padding: 6px;
+}
+
+#audioControls > span {
+    width: 120px;
+    margin: 0 8px;
+}
+#audioControls > span:first-of-type {
+    text-align: end;
+}
+
+#audioControls > #volume {
+    width: 60px;
+}
+
+#playButton {
+    border: 2px solid white;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    color: white;
+    opacity: 0.6;
+    background: url('play.svg') no-repeat scroll center center;
+}
+#playButton.playing {
+    background-image: url('pause.svg');
+}
+#playButton:hover, #playButton:focus {
+    opacity: 1;
+}
+
+#time {
+    width: 100%;
+}
+
+.single-section {
+    display: block;
+    margin: 16px 0;
+}
